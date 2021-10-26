@@ -1,3 +1,13 @@
+""""
+Midterm project for Python Programming. Make a simple backgammon game
+"""
+
+__author__ = "Anthony Kanellopoulos"
+
+from random import shuffle
+
+
+
 class Card:
     def __init__(self, value, suit):
 
@@ -11,8 +21,7 @@ class Card:
         #would be nice to do some formatting here to make the cards look better to the user
         return "\n{}\n------\n{}\n".format(self.suit, self.value)
 
-two_of_heart = Card(2, "heart")
-print(two_of_heart)
+
 
 
 class Deck:
@@ -49,9 +58,16 @@ class Deck:
         """
         Shuffle the list of cards that make up the deck
 
+        Parameters
+        ----------
+        None
+
+        Return
+        ------
+        - the deck list with cards shuffled
         """
 
-        pass
+        shuffle(self._deck)
 
 
 
@@ -59,3 +75,16 @@ class Deck:
     def print_deck(self):
         for card in self._deck:
             print(card)
+
+
+def main():
+
+    deck = Deck()
+    deck.print_deck()
+    deck.shuffle()
+    deck.print_deck()
+
+
+if __name__ == "__main__":
+
+    main()
