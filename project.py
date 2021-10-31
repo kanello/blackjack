@@ -1,5 +1,5 @@
 """"
-Midterm project for Python Programming. Make a simple backgammon game
+Midterm project for Python Programming. Make a simple blackjack game
 """
 
 __author__ = "Anthony Kanellopoulos"
@@ -37,7 +37,8 @@ class Deck:
 
     def deal(self, hidden = False):
         """"
-        Return a random card from the deck. Pop the card from the deck to ensure it does not get dealt again
+        Return a random card from the deck. Pop the card from the deck to ensure it does not get dealt again.
+        Deals a single card
 
         Parameters
         ----------
@@ -50,10 +51,22 @@ class Deck:
         - a random card from the deck
         - prints the value and the suit
         """
+        
+        #debuger to know the number of cards before we deal one
+        # print("number of cards is {}".format(len(self._deck)))
 
-        pass
+        dealt_card = self._deck.pop(0)
+
+        if hidden == False:
+            print(dealt_card)
+        else:
+            print("Card is facing downwards")
+
+        #debugger to show that the number of cards has been reduced by one
+        # print("number of cards is {}".format(len(self._deck)))
 
 
+        
     def shuffle(self):
         """
         Shuffle the list of cards that make up the deck
@@ -70,8 +83,6 @@ class Deck:
         shuffle(self._deck)
 
 
-
-
     def print_deck(self):
         for card in self._deck:
             print(card)
@@ -80,9 +91,12 @@ class Deck:
 def main():
 
     deck = Deck()
-    deck.print_deck()
+    # deck.print_deck()
     deck.shuffle()
-    deck.print_deck()
+    # deck.print_deck()
+    card_1 = deck.deal()
+    card_2 = deck.deal()
+
 
 
 if __name__ == "__main__":
