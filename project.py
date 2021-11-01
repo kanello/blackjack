@@ -5,7 +5,7 @@ Midterm project for Python Programming. Make a simple blackjack game
 __author__ = "Anthony Kanellopoulos"
 
 from random import shuffle
-
+from abc import ABC, abstractmethod
 
 
 class Card:
@@ -14,16 +14,17 @@ class Card:
         self.value = value
         self.suit = suit
 
-        
+
+    #we'll need to define how addition works so that we can calculate the value of a hand (made up of two cards) later on
+    def __add__(self, other):
+
+        return self.value + other.value    
 
     def __str__(self) -> str:
         
         #would be nice to do some formatting here to make the cards look better to the user
-        return "\n{}\n------\n{}\n".format(self.suit, self.value)
-
-
-
-
+        return "\n|{}|\n------\n{}\n".format(self.suit, self.value)
+    
 class Deck:
 
     def __init__(self):
@@ -37,7 +38,7 @@ class Deck:
 
     def deal(self, hidden = False):
         """"
-        Return a random card from the deck. Pop the card from the deck to ensure it does not get dealt again.
+        Return the top card from the deck. Pop the card from the deck to ensure it does not get dealt again.
         Deals a single card
 
         Parameters
@@ -48,8 +49,8 @@ class Deck:
 
         Returns
         -------
-        - a random card from the deck
-        - prints the value and the suit
+        - the top card from the deck
+        - prints the value and the suit (if hidden = False)
         """
         
         #debuger to know the number of cards before we deal one
@@ -65,6 +66,7 @@ class Deck:
         #debugger to show that the number of cards has been reduced by one
         # print("number of cards is {}".format(len(self._deck)))
 
+        return dealt_card
 
         
     def shuffle(self):
@@ -87,6 +89,194 @@ class Deck:
         for card in self._deck:
             print(card)
 
+    def size(self):
+        return len(self._deck)
+
+class Hand:
+    """
+    This class will deal with all operations relating to a dealt hand
+    - addition of cards
+    - comparing hands to each other
+    """
+
+    def __init__(self, card1, card2):
+        """
+        
+        """
+        
+        self.hand = card1.value + card2.value
+
+    def highest_hand (self, other):
+        """
+        take multiple hands as input here
+        try and get it to return the winning hand
+        """
+
+        if self.hand > other.hand:
+            
+            print("{} wins".format(self))
+
+            return self
+        
+        if self.hand < other.hand:
+            print("{} wins".format(other))
+            return other
+        
+        else:
+            print("it's a tie!")
+
+        
+
+
+
+    def __str__(self):
+        return "{}".format(self.hand)
+
+class Player(ABC):
+    """
+    Documentation
+    - I want the player to have an attribute which is their hand
+    """
+
+
+    
+    @abstractmethod
+    def decide_play(card1, card2):
+        """
+        Documentation
+        - decide whether to stay or whether to draw
+        """
+        pass
+
+class HumanPlayer(Player):
+    
+    def __init__(self) -> None:
+        super().__init__()
+        self.score = 0
+          
+        
+    def decide_play(self, deck, card1, card2):
+        """"
+        Give the player an option to draw a card or stay
+        """
+
+        hand = card1 + card2
+
+        print("Your hand is {}".format(hand))
+
+        while hand < 21:
+
+            decision = input("\nWhat would you like to do?\nDRAW [d]\nSTAY [s]\n".format(hand))
+            
+            #obviously you must do some input validation here
+            if decision == 'd':
+                
+                card = deck.deal()
+                hand += card.value
+
+                print("Your hand value is {}".format(hand))
+            
+            elif decision == 's':
+
+                print("That may (or may not) have been a wise decision. Only time will tell")
+                break
+                
+
+        if hand == 21:
+            print("You get a point!")
+            self.score += 1
+        
+        elif hand > 21:
+            print("sorry, you went bust!")
+            #kick the player out of the game
+
+        return hand
+        
+
+
+    def __str__(self):
+        
+        return "You currently have {} points in this game".format(self.score)
+        
+class ComputerPlayer(Player):
+    """
+    Computer player plays exactly like the dealer currently
+    """
+    
+    
+    def __init__(self) -> None:
+        super().__init__()
+        
+        self.score = 0
+
+    def decide_play(self, deck, card1, card2):
+        """
+        Control of dealer player decision
+
+    
+        """
+
+        hand = card1 + card2
+        print("computer's hand is {}".format(hand))
+
+        while hand < 17:
+            new_card = deck.deal()
+            hand += new_card.value
+            print("computer has {}".format(hand))
+
+        
+        if hand < 21:
+            print("I stay")
+        
+        elif hand == 21:
+            print("Yipee for me, I have 21!")
+        
+        elif hand >21:
+            print("computer is bust")
+
+        
+
+        return hand
+
+class Dealer(Player):
+    
+    def __init__(self) -> None:
+        super().__init__()
+        
+        self.score = 0
+
+    def decide_play(self, deck, card1, card2):
+        """
+        Control of dealer player decision
+
+    
+        """
+
+        hand = card1 + card2
+        print("Dealer's hand is {}".format(hand))
+
+        while hand < 17:
+            new_card = deck.deal()
+            hand += new_card.value
+            print("Dealer has {}".format(hand))
+
+        
+        if hand < 21:
+            print("I stay")
+        
+        elif hand == 21:
+            print("Yipee for me, I have 21!")
+        
+        elif hand >21:
+            print("dealer is bust")
+
+        
+
+        return hand
+
+class Game()
+    
+
 
 def main():
 
@@ -94,8 +284,16 @@ def main():
     # deck.print_deck()
     deck.shuffle()
     # deck.print_deck()
-    card_1 = deck.deal()
-    card_2 = deck.deal()
+
+
+    player_1 = HumanPlayer()
+    dealer = Dealer()
+    com = ComputerPlayer()
+    player_1.decide_play(deck, deck.deal(), deck.deal())
+    com.decide_play(deck, deck.deal(), deck.deal())
+    dealer.decide_play(deck, deck.deal(), deck.deal())
+
+    print(deck.size())
 
 
 
