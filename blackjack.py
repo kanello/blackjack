@@ -6,6 +6,7 @@ __author__ = "Anthony Kanellopoulos"
 
 from random import shuffle
 from abc import ABC, abstractmethod
+from time import sleep
 
 
 class Card:
@@ -138,6 +139,11 @@ class Player(ABC):
     - I want the player to have an attribute which is their hand
     """
 
+    def __init__(self) -> None:
+        super().__init__()
+        card1 = None
+        card2 = None
+
 
     
     @abstractmethod
@@ -153,6 +159,8 @@ class HumanPlayer(Player):
     def __init__(self) -> None:
         super().__init__()
         self.score = 0
+
+
           
         
     def decide_play(self, deck, card1, card2):
@@ -283,23 +291,74 @@ class Game():
     
     def __init__(self, human_player=1, computer_player=1):
         self.human_player = HumanPlayer()
-
-        for i in range(computer_player):
-            ComputerPlayer()
-        
+        self.computer_player = ComputerPlayer()
         self.dealer = Dealer()
+        self.deck = Deck()
+
+
+    def introduction(self):
+        #initialise our playing deck
+        self.deck.shuffle()
+
+        #give some nice UI instructions for what's going to happen
+        separator = "\n"+"_"*30
+        print("\n\nWelcome to my home-made blackjack game!{}".format(separator))
+        sleep(1)
+        print("""\n\nThe aim of the game is simple...get as close to 21 as you can!\n
+        Each player gets dealt two cards at the start of a round. Your goal is to get closer to 21 than the dealer does. If you go over 21 you lose!\n""")
+        user_understands = input("Press ENTER to continure\n")
+    
+    def set_the_table(self):
+        print("\nDealer is dealing the first cards\n")
+        sleep(2)
+
+        print("HUMAN")
+        self.human_player.card1 = self.deck.deal()
         
+        sleep(3)
 
-    def play():
+        print("COMPUTER")
+        self.computer_player.card1 = self.deck.deal()
+        sleep(3)
+
+        print("DEALER")
+        self.dealer.card1 = self.deck.deal()
+        sleep(2)
+
+        print("First round of cards has been dealt. Feeling lucky?\n")
+        input("Press ENTER to continue to second round of cards\n")
+
+        #deal second card, facing up for all except for dealer
+        print("Dealing the second card\n")
+        sleep(1)
+        print("HUMAN")
+        print(self.human_player.card1)
+        self.human_player.card2 = self.deck.deal()
+        sleep(3)
+
+        print("COMPUTER")
+        print(self.computer_player.card1)
+        self.computer_player.card2 = self.deck.deal()
+        sleep(3)
+
+        print("DEALER")
+        print(self.dealer.card1)
+        self.dealer.card2 = self.deck.deal(hidden=True)
+        sleep(3)
+
+
+
+    def play(self):
         
-        #create a deck
-        deck = Deck()
+        self.introduction()
+        sleep(2)
+        
+        separator = "\n"+"_"*30
+        print(separator)
 
-        #shuffle the deck
+        self.set_the_table()
 
-        #deal first card to all players facing up
-
-        #deal second card to all players, dealer's facing down
+        # self.human_player.decide_play(card1, )
 
         #human player plays
 
@@ -315,7 +374,7 @@ class Game():
 
         
 
-    def
+    # def
 
 
 def main():
@@ -339,4 +398,6 @@ def main():
 
 if __name__ == "__main__":
 
-    main()
+    # main()
+    game = Game()
+    game.play()
