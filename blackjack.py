@@ -413,35 +413,10 @@ class Game():
             final_ranking.append([self.dealer, self.dealer.name, self.dealer.hand])
 
         #order the final ranking list by the hand
-        print(final_ranking)
+        final_ranking = sorted(final_ranking, key= lambda x:x[2], reverse=True)
+        winner = final_ranking[0][0]
+        winner.points +=1 
 
-        sorted(final_ranking, key= lambda x:x[2], reverse=True)
-        print(final_ranking)
-
-
-        # if self.dealer.hand > 21:
-        #     if player.hand >21:
-        #         print("You are bust so is the dealer. Phew!")
-            
-        #     if player.hand < 21:
-        #         print("The dealer is bust and you're still in it. Nice one :) ")
-        #         player.points += 1
-        
-        # else:
-        #     if player.hand  > 21:
-        #         print("You are bust and the dealer is still in the game :( You lose a point for that")
-        #         player.points -= 1
-            
-        #     elif player.hand > self.dealer.hand:
-        #         print("You beat the dealer by! You get a point".format(abs(player.hand - self.dealer.hand)))
-        #         player.points += 1
-            
-        #     elif player.hand == self.dealer.hand:
-        #         print("No points for tying")
-
-        #     elif player.hand < self.dealer.hand:
-        #         print("The dealer has beat you by {}. That's -1 point".format(abs(self.dealer.hand - player.hand)))
-        #         player.points -= 1
     
     def clean_table(self):
         for player in self.players:
@@ -458,15 +433,12 @@ class Game():
         self.set_players()
         sleep(2)
 
-        
-            
 
         while True:
             
+            #reset everyone's hand value and wipe their cards
             self.clean_table()
             
-
-
             #dealing the first two cards to all players
             self.set_the_table()
 
@@ -480,11 +452,7 @@ class Game():
 
             #now let's tally up scores and decide winners
             self.winning_rules()
-            # for player in self.players:
-        
-            #     print("{}".format(player.name))
-            #     self.winning_rules(player)
-            #     sleep(2)
+           
 
             #our points are...
             print("\n\nHere's our points tally\n")
@@ -509,7 +477,7 @@ class Game():
 
 
 def main():
-    game = Game(1, 1)
+    game = Game(human_player=0, computer_player=3)
     game.play()
     
 
