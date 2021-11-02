@@ -8,6 +8,7 @@ from random import shuffle
 from abc import ABC, abstractmethod
 import random
 from time import sleep
+import os
 
 
 
@@ -205,7 +206,8 @@ class ComputerPlayer(Player):
         
     def set_name(self):
 
-        names = ["Jago", "Leroy", "Fabio", "Soren", "Brida", "Aubrie", "Mika", "Roxanne"]
+        #inspired from the least popular baby names - https://hubbleconnected.com/blogs/news/50-least-and-most-common-baby-names-for-boys-and-girls
+        names = ["Jago", "Leroy", "Fabio", "Soren", "Brida", "Aubrie", "Mika", "Roxanne", "Ingrid", "Archie", "Benedict", "Margo", "Jad", "Harper", "Paola", "Ezra", "Idris"]
         self.name = random.choice(names)
         
     def decide_play(self, deck):
@@ -246,6 +248,7 @@ class Dealer(Player):
         self.score = 0
 
     def set_name(self):
+        self.name = "Dealer"
         return super().set_name()
 
     def decide_play(self, deck):
@@ -297,7 +300,10 @@ class Game():
         self.computer_player_number = computer_player
         
         self.players  = []
-        
+
+    def refresh_deck(self):
+        self.deck = Deck()
+
     def introduction_screen(self):
        """"
        This does not interact with any user number - it's just a print screen
@@ -355,6 +361,7 @@ class Game():
     def set_the_table(self):
         
         #dealer is shuffling the deck; could also add a nice visual here and add a sleep too
+        self.refresh_deck()
         self.deck.shuffle()
         
         print("\nDealer is dealing the first cards\n")
@@ -417,6 +424,7 @@ class Game():
         winner = final_ranking[0][0]
         winner.points +=1 
 
+        print("{} wins!".format(winner.name))
     
     def clean_table(self):
         for player in self.players:
@@ -468,16 +476,18 @@ class Game():
 
             if x == 'y':
                 pass
-                print("Ok, there are {} cards remaining in the deck".format(self.deck.size()))
+                print("Ok, starting up a new deck for you.")
             if x == 'n':
-                exit
+                break
+        
+        print("Thanks for playing, see you next time")
 
 
     
 
 
 def main():
-    game = Game(human_player=0, computer_player=3)
+    game = Game(human_player=0, computer_player=2)
     game.play()
     
 
