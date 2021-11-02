@@ -245,49 +245,95 @@ class Player(ABC):
         print(self.name)
 
 class HumanPlayer(Player):
+    """A derived class from Player. Allows a person to control decisions from the console
+
+    Atttributes
+    -----------
+    points: int
+        The points accumulated by a player over a number of rounds of blackjack
+    
+    name: str
+        The name of the player. So we can distinguish them and interact with the user
+    
+    cards: list
+        Contains all the cards dealt to a single player
+
+    hand: int
+        Calculate the hand of a player. Sums the card.value for each card inside the 'cards' attribute
+    """
     
     def __init__(self) -> None:
         super().__init__()
         
     def set_name(self):
+        """Give a name to the human player
+
+        Returns
+        -------
+        name:str
+            Asks the user what name they'd like to give to the Player obj
+        """
         
         self.name = input("Please input player name:\t")
               
     def decide_play(self, deck):
-        """"
-        Give the player an option to draw a card or stay
+        """"A human player decides to stay or draw a card
+
+        Paramters
+        ---------
+        deck: obj
+            The deck that we are playing the game with
+
+        Returns
+        -------
+        hand: int
+            The sum of values of all the cards inside the cards list
         """
        
+        #give the user an idea of what they have, so they can make an educated decision
         print("\nYour hand is {}".format(self.hand))
 
+        #the user should can only draw if they are below 21
         while self.hand < 21:
 
             decision = input("\nWhat would you like to do?\nDRAW [d]\nSTAY [s]\n\n".format(self.hand))
             
-            #obviously you must do some input validation here
+            #deal the user a card
             if decision == 'd':
                 
                 self.deal_card(deck)
+                
+                #update the user on what their hand is
                 print("\nYour hand value is {}\n".format(self.hand))
             
+            #user stays
             elif decision == 's':
 
                 print("\nThat may (or may not) have been a wise decision. Only time will tell\n")
                 break
-                
+
+        #the user should automatically get a point if they get 21 - their turn ends
         if self.hand == 21:
             print("You get a point!")
             self.points += 1
         
+        #inform the user they are bust - their turn ends
         elif self.hand > 21:
             print("sorry, you went bust!")
 
+        #pause until the user confirms they'd like to move on. Feels jarring if things move along quicklu on their own
         input("Press ENTER to move to next player")
 
         return self.hand
 
     def __str__(self):
-        
+        """Show the user how many points they have accumulated over the rounds
+
+        Returns
+        -------
+        score: int
+            The sum of all the points accumulated over the rounds
+        """
         return "You currently have {} points in this game".format(self.score)
         
 class ComputerPlayer(Player):
