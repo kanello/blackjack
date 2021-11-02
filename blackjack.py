@@ -480,7 +480,7 @@ class Game():
             if x == 'n':
                 break
         
-        print("Thanks for playing, see you next time")
+        print("\nThanks for playing, see you next time")
 
 
     
