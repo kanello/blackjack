@@ -501,29 +501,57 @@ class Dealer(Player):
             print("dealer is bust\n")
         
 class Game():
-    """"
-    Initialise a game of blackjack
-    automatically add a human player, computer player and of course, always a dealer
-    pass the computer player as default=1
+    """"Start a game of blackjack.
+
+    Attributes
+    ----------
+    dealer: obj
+        Spin up a dealer
+    
+    deck: obj
+        spin up a deck of cards
+
+    human_player_number: int [default = 1]
+        how many human players will we have
+
+    computer_player_number: int [default = 1]
+        how many computer players will we have
+    
+    players: list
+        adds the human and computer player objects into a list
     """
     
     def __init__(self, human_player=1, computer_player=1):
-        self.human_player = HumanPlayer()
-        self.computer_player = ComputerPlayer()
+        """Construct a game of blackjack
+        """
+        #add a dealer
         self.dealer = Dealer()
+        
+        #add a deck
         self.deck = Deck()
         
+        #how many humans and computers do we want playing
         self.human_player_number = human_player
         self.computer_player_number = computer_player
         
         self.players  = []
 
     def refresh_deck(self):
+        """spin up a new deck
+
+        Returns
+        -------
+        deck: obj
+            new deck of cards
+        """
         self.deck = Deck()
 
     def introduction_screen(self):
-       """"
-       This does not interact with any user number - it's just a print screen
+       """"Prints introductory messages to the user
+       
+       Returns
+       -------
+       None
        """
        
        #explain to the human player how the game is played, what the rules are and how to interact with the game
@@ -536,18 +564,34 @@ class Game():
        user_understands = input("Press ENTER to continue\n_______________________________\n")  
 
     def set_players(self):
+        """Prepare the blackjack game by spinning up the required players (set by the contructor)
+
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        players: list
+            players list is populated by the amout of players requested in the constructor
+        """
 
         print("First thing's first. Who will be playing? We have {} human players and {} computer players\n".format(self.human_player_number, self.computer_player_number))
         sleep(1)
-        #create the players in this loop and ask for names for human players
         print("Let's start with you...humans\n_______________________________\n")
-
         sleep(1)
+
+        #create the human players in this loop and ask for names for human players
         for number in range(self.human_player_number):
             print("For human player {}".format(number+1))
+            
+            #spin up a human player and request a name
             a = HumanPlayer()
             a.set_name()
             print("\n")
+
+            #put them into the players list for later interaction
             self.players.append(a)
             sleep(1)
 
@@ -555,13 +599,21 @@ class Game():
         print("ok, thank you\n")
         print("\n_______________________\nNow for our computer players we will have\n\n")
         sleep(2)
+        
+        #create computer players in the loop
         for number in range(self.computer_player_number):
             a = ComputerPlayer()
+            
+            #show the names of the players created
             print(a.name+"\n")
+
+            #add them to the list
             self.players.append(a)
             sleep(1)
         
         sleep(2)
+        
+        #recap which players are in the game
         print("__________________________")
         print("Here are all our players:\n")
         for player in self.players:
@@ -570,6 +622,13 @@ class Game():
         input("\nPress ENTER to continue\n")
 
     def dealer_catchphrases(self):
+        """Silly catchphrases that the dealer can "throw" in the mix
+
+        Returns
+        -------
+        catchphrase: str
+            A string with a predefined catchphrase, randomly selected from the list
+        """
 
         catch_phrases = ["Winner winner chicken dinner", "Feeling lucky?", "Jesus ... take the wheel!", "Are you fired up?" ]
 
