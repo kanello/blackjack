@@ -82,14 +82,39 @@ class Card:
         """
         return int(self.value) + int(other.value)
 
+    #need to override the print so we can use it to show the user what a card was
     def __str__(self):
+        """Print the face and suit of a card
         
+        Returns
+        -------
+        str
+            Face | Suit of a card
+        """
         #would be nice to do some formatting here to make the cards look better to the user
         return "\n{} | {}\n ".format(self.face, self.suit)
     
 class Deck:
+    """A standard deck of 52 cards. Each card is a Card obj.
 
+    Attributes
+    ----------
+    _deck: list
+        A list of 52 card objects containing all combinations of faces/values and suits
+
+    """
     def __init__(self):
+        """Constructs a deck of cards
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        _deck: list
+            As above
+        
+        """
 
         suits = ["HEARTS", "DIAMONDS", "CLUBS", "SPADES"]
         face = [n for n in range(2, 10)]
@@ -100,9 +125,9 @@ class Deck:
         self._deck = [Card(value, suit) for suit in suits for value in face]
 
     def deal(self, hidden = False):
-        """"
-        Return the top card from the deck. Pop the card from the deck to ensure it does not get dealt again.
-        Deals a single card
+        """"Deals the top card from the deck. Pop the card from the deck to ensure it does not get dealt again.
+        It prints the face of the card and the suit, unless hidden = True (used for dealer's second card)
+        
 
         Parameters
         ----------
@@ -112,28 +137,23 @@ class Deck:
 
         Returns
         -------
-        - the top card from the deck
-        - prints the value and the suit (if hidden = False)
+        dealt_card: obj
+            A card obj from the top of the deck. It als
         """
         
-        #debuger to know the number of cards before we deal one
-        # print("number of cards is {}".format(len(self._deck)))
-
+        #deal the first card of the deck
         dealt_card = self._deck.pop(0)
 
+        #the dealer's second card must be hidden
         if hidden == False:
             print(dealt_card)
         else:
             print("Card 2 is facing downwards")
 
-        #debugger to show that the number of cards has been reduced by one
-        # print("number of cards is {}".format(len(self._deck)))
-
         return dealt_card
         
     def shuffle(self):
-        """
-        Shuffle the list of cards that make up the deck
+        """Shuffle the list of cards that make up the deck
 
         Parameters
         ----------
@@ -141,16 +161,24 @@ class Deck:
 
         Return
         ------
-        - the deck list with cards shuffled
+        _deck: list
+            The deck list with cards shuffled
         """
 
         shuffle(self._deck)
 
-    def print_deck(self):
-        for card in self._deck:
-            print(card)
-
     def size(self):
+        """Show how many cards remain in the deck
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        len(_deck): int
+            The number of items in the _deck list
+        """
         return len(self._deck)
 
 class Player(ABC):
