@@ -35,13 +35,13 @@ class Card:
     def __str__(self):
         
         #would be nice to do some formatting here to make the cards look better to the user
-        return "\n{} | {}\n --> this is worth {}".format(self.face, self.suit, self.value)
+        return "\n{} | {}\n ".format(self.face, self.suit)
     
 class Deck:
 
     def __init__(self):
 
-        suits = ["hearts", "diamonds", "clubs", "spades"]
+        suits = ["HEARTS", "DIAMONDS", "CLUBS", "SPADES"]
         face = [n for n in range(2, 10)]
         face += ["J", "Q", "K", "A"]
 
@@ -113,12 +113,19 @@ class Player(ABC):
 
     def __init__(self) -> None:
         super().__init__()
-        card1 = 0
-        card2 = 0
-        self.hand = card1 + card2
+        self.card1 = None
+        self.card2 = None
         self.points = 0
-
-
+        self.name = None
+        self.cards = []
+        self.hand = 0
+  
+    def deal_card(self, deck, Hidden= False):
+        new_card = deck.deal(Hidden)
+        self.cards.append(new_card)
+        
+        #calculate the hand
+        self.hand += new_card.value
     
     @abstractmethod
     def decide_play(self, deck):
@@ -130,21 +137,28 @@ class Player(ABC):
         
         pass
 
+    @abstractmethod
+    def set_name(self):
+        
+        pass
+
+    def show_name(self):
+        print(self.name)
+
 class HumanPlayer(Player):
     
     def __init__(self) -> None:
         super().__init__()
+        
+    def set_name(self):
+        
+        self.name = input("Please input player name:\t")
               
     def decide_play(self, deck):
         """"
         Give the player an option to draw a card or stay
         """
        
-        
-        #ensure that the player is in the game
-        self.hand = self.card1 + self.card2
-        
-        
         print("\nYour hand is {}".format(self.hand))
 
         while self.hand < 21:
@@ -154,9 +168,7 @@ class HumanPlayer(Player):
             #obviously you must do some input validation here
             if decision == 'd':
                 
-                card = deck.deal()
-                self.hand += card.value
-
+                self.deal_card(deck)
                 print("\nYour hand value is {}\n".format(self.hand))
             
             elif decision == 's':
@@ -164,7 +176,6 @@ class HumanPlayer(Player):
                 print("\nThat may (or may not) have been a wise decision. Only time will tell\n")
                 break
                 
-
         if self.hand == 21:
             print("You get a point!")
             self.points += 1
@@ -188,8 +199,13 @@ class ComputerPlayer(Player):
     
     def __init__(self) -> None:
         super().__init__()
+        self.set_name()
         
+    def set_name(self):
 
+        names = ["Jago", "Leroy", "Fabio", "Soren", "Brida", "Aubrie", "Mika", "Roxanne"]
+        self.name = random.choice(names)
+        
     def decide_play(self, deck):
         """
         Control of dealer player decision
@@ -197,13 +213,14 @@ class ComputerPlayer(Player):
     
         """
 
-        self.hand = self.card1 + self.card2
-        print("computer's hand is {}".format(self.hand))
+        print("{}'s hand is {}".format(self.name, self.hand))
 
         while self.hand < 17:
-            new_card = deck.deal()
-            self.hand += new_card.value
-            print("computer has {}".format(self.hand))
+            sleep(1)
+            print("{}: Hit me!".format(self.name))
+            sleep(1.5)
+            self.deal_card(deck)
+            print("{} has {}".format(self.name, self.hand))
             sleep(1.5)
 
         
@@ -214,10 +231,8 @@ class ComputerPlayer(Player):
             print("Yipee for me, I have 21!")
         
         elif self.hand >21:
-            print("computer is bust")
+            print("{} is bust".format(self.name))
         sleep (2)
-
-        
 
         return self.hand
 
@@ -228,19 +243,25 @@ class Dealer(Player):
         
         self.score = 0
 
+    def set_name(self):
+        return super().set_name()
+
     def decide_play(self, deck):
         """
         Control of dealer player decision
 
     
         """
+        
+        print("Dealer's cards are")
+        for card in self.cards:
+            print(card)
 
-        self.hand = self.card1 + self.card2
-        print("Dealer's hand is {}\n".format(self.hand))
+        print("The hand is worth {}".format(self.hand))
 
+        #from the third card onwards, we can see the dealer's card immediately
         while self.hand < 17:
-            new_card = deck.deal()
-            self.hand += new_card.value
+            self.deal_card(deck)
             print("Dealer has {}".format(self.hand))
 
         
@@ -265,22 +286,60 @@ class Game():
         self.computer_player = ComputerPlayer()
         self.dealer = Dealer()
         self.deck = Deck()
+        
+        self.human_player_number = human_player
+        self.computer_player_number = computer_player
+        
+        self.players  = []
+        
+    def introduction_screen(self):
+       """"
+       This does not interact with any user number - it's just a print screen
+       """
+       
+       #explain to the human player how the game is played, what the rules are and how to interact with the game
+       separator = "\n"+"_"*30
+       print("\n\nLET'S PLAY BLACKJACK!{}".format(separator))
+       sleep(1.5)
+       print("\n\nThe aim of the game is simple...get as close to 21 as you can\n")
+       sleep(2)
+       print("* Each player gets dealt two cards at the start of a round\n* You can choose to draw a card or stay after that \n* Your goal is to get closer to 21 than the dealer does. You want to beat the dealer\n* If you go over 21 you lose a point!\n* If you beat the dealer you get a point \n* If you draw with the dealer you don't lose points\n")
+       user_understands = input("Press ENTER to continue\n_______________________________\n")  
 
-    def introduction(self):
-        #initialise our playing deck
-        self.deck.shuffle()
+    def set_players(self):
 
-        #give some nice UI instructions for what's going to happen
-        separator = "\n"+"_"*30
-        print("\n\nLET'S PLAY BLACKJACK!{}".format(separator))
-        sleep(1.5)
-        print("\n\nThe aim of the game is simple...get as close to 21 as you can\n")
+        print("First thing's first. Who will be playing? We have {} human players and {} computer players\n".format(self.human_player_number, self.computer_player_number))
+        sleep(1)
+        #create the players in this loop and ask for names for human players
+        print("Let's start with you...humans\n_______________________________\n")
+
+        sleep(1)
+        for number in range(self.human_player_number):
+            print("For human player {}".format(number+1))
+            a = HumanPlayer()
+            a.set_name()
+            print("\n")
+            self.players.append(a)
+            sleep(1)
+
+        sleep(1)
+        print("ok, thank you\n")
+        print("\n_______________________\nNow for our computer players we will have\n\n")
         sleep(2)
-        print("* Each player gets dealt two cards at the start of a round\n* You can choose to draw a card or stay after that \n* Your goal is to get closer to 21 than the dealer does. You want to beat the dealer\n* If you go over 21 you lose a point!\n* If you beat the dealer you get a point \n* If you draw with the dealer you don't lose points\n")
-        user_understands = input("Press ENTER to continue")
-        separator = "_"*30
-        print(separator)
-          
+        for number in range(self.computer_player_number):
+            a = ComputerPlayer()
+            print(a.name+"\n")
+            self.players.append(a)
+            sleep(1)
+        
+        sleep(2)
+        print("__________________________")
+        print("Here are all our players:\n")
+        for player in self.players:
+            print(player.name)
+
+        input("\nPress ENTER to continue\n")
+
     def dealer_catchphrases(self):
 
         catch_phrases = ["Winner winner chicken dinner", "Feeling lucky?", "Jesus ... take the wheel!", "Are you fired up?" ]
@@ -288,45 +347,50 @@ class Game():
         return random.choice(catch_phrases)
 
     def set_the_table(self):
+        
+        #dealer is shuffling the deck; could also add a nice visual here and add a sleep too
+        self.deck.shuffle()
+        
         print("\nDealer is dealing the first cards\n")
         sleep(2)
 
-        print("\nYOU")
-        self.human_player.card1 = self.deck.deal()
         
-        sleep(3)
+        #deal the first card to all players
+        for player in self.players:
+            print("\n{}\n".format(player.name))
 
-        print("\nCOMPUTER")
-        self.computer_player.card1 = self.deck.deal()
-        sleep(3)
+            sleep(1)
 
+            player.deal_card(self.deck)
+
+            sleep(2)
+        
+        #deal a card for the dealer
         print("\nDEALER")
-        self.dealer.card1 = self.deck.deal()
-        sleep(2)
+        self.dealer.deal_card(self.deck)
 
         print("First round of cards has been dealt. {}\n".format(self.dealer_catchphrases()))
-        input("Press ENTER to continue to second round of cards\n")
-        separator = "_"*30
-        print(separator)
+        input("Press ENTER to continue to second round of cards\n_______________________________\n")
 
-        #deal second card, facing up for all except for dealer
-        print("Dealing the second card\n")
-        sleep(1)
-        print("\nYOU")
-        print(self.human_player.card1)
-        self.human_player.card2 = self.deck.deal()
-        sleep(3)
+        #deal the second round of cards
+        for player in self.players:
+            
+            #show the player their second card
+            print("\n{}\n".format(player.name))
+            sleep(1)
+            print("Card 2")
+            player.deal_card(self.deck)
+            
+            #to remind the player what their first hand was
+            print("Card 1")
+            print(player.cards[0])
+            sleep(2)
 
-        print("\nCOMPUTER")
-        print(self.computer_player.card1)
-        self.computer_player.card2 = self.deck.deal()
-        sleep(3)
-
-        print("\nDEALER")
-        print(self.dealer.card1)
-        self.dealer.card2 = self.deck.deal(hidden=True)
-        sleep(3)
-
+        print("\nDEALER\n")
+        print("Card 1")
+        print(player.cards[0])
+        self.dealer.deal_card(self.deck, True)        
+    
     def winning_rules(self, player):
 
         if self.dealer.hand > 21:
@@ -355,8 +419,10 @@ class Game():
     
     def play(self):
         
-
-        self.introduction()
+        #turn this off for now, to debug faster
+        # self.introduction_screen()
+        sleep(2)
+        self.set_players()
         sleep(2)
             
 
@@ -366,27 +432,29 @@ class Game():
             self.set_the_table()
 
             #now players decide if they want to hit or stay
-            self.human_player.decide_play(self.deck)
-            self.computer_player.decide_play(self.deck)
+            #remember --> dealer is not in the list of players
+            for player in self.players:
+                player.decide_play(self.deck)
+
+    
 
             #dealer reveals his cards
             print("Let's see, what did the dealer get?\n")
             sleep(1)
-            print(self.dealer.card1)
-            print(self.dealer.card2)
+    
             self.dealer.decide_play(self.deck)
 
-            print("HUMAN")
+            print("{}".format(self.human_player.name))
             self.winning_rules(self.human_player)
             sleep(2)
 
-            print("\nCOMPUTER")
+            print("\n{}".format(self.computer_player.name))
             self.winning_rules(self.computer_player)
 
             #our points are...
             print("\n\nHere's our points tally\n")
-            print("Human: {}".format(self.human_player.points))
-            print("Computer: {}".format(self.computer_player.points))
+            print("{}: {}".format(self.human_player.name, self.human_player.points))
+            print("{}: {}".format(self.computer_player.name, self.computer_player.points))
             print("Dealer: {}".format(self.dealer.points))
 
 
@@ -403,7 +471,7 @@ class Game():
 
 
 def main():
-    game = Game()
+    game = Game(1, 1)
     game.play()
     
 
