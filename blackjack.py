@@ -443,6 +443,13 @@ class Game():
         #         print("The dealer has beat you by {}. That's -1 point".format(abs(self.dealer.hand - player.hand)))
         #         player.points -= 1
     
+    def clean_table(self):
+        for player in self.players:
+            player.hand = 0
+        
+        self.dealer.hand = 0
+        self.dealer.cards = []
+
     def play(self):
         
         #turn this off for now, to debug faster
@@ -456,8 +463,9 @@ class Game():
 
         while True:
             
-            for player in self.players:
-                player.hand = 0
+            self.clean_table()
+            
+
 
             #dealing the first two cards to all players
             self.set_the_table()
