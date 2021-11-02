@@ -25,7 +25,11 @@ class Card:
         elif face in range(1,10):
             self.value = int(face)
 
-
+    def flip_ace(self, direction):
+        if direction == 'up':
+            self.value = 11
+        elif direction == 'down':
+            self.value == 1
 
     #we'll need to define how addition works so that we can calculate the value of a hand (made up of two cards) later on
     def __add__(self, other):
@@ -48,7 +52,6 @@ class Deck:
 
         #using list comprehension to keep compact #not using face values for ease
         self._deck = [Card(value, suit) for suit in suits for value in face]
-
 
     def deal(self, hidden = False):
         """"
@@ -103,7 +106,6 @@ class Deck:
 
     def size(self):
         return len(self._deck)
-
 
 class Player(ABC):
     """
@@ -252,6 +254,10 @@ class Dealer(Player):
 
     
         """
+
+        #dealer reveals their cards
+        print("Let's see, what did the dealer get?\n")
+        sleep(1)
         
         print("Dealer's cards are")
         for card in self.cards:
@@ -391,31 +397,51 @@ class Game():
         print(player.cards[0])
         self.dealer.deal_card(self.deck, True)        
     
-    def winning_rules(self, player):
+    def winning_rules(self):
 
-        if self.dealer.hand > 21:
-            if player.hand >21:
-                print("You are bust so is the dealer. Phew!")
+
+        final_ranking = []
+
+        for player in self.players:
+            if player.hand <= 21:
+                each_player = []
+                each_player = [player, player.name, player.hand]
             
-            if player.hand < 21:
-                print("The dealer is bust and you're still in it. Nice one :) ")
-                player.points += 1
+                final_ranking.append(each_player)
+
+        if self.dealer.hand <22:
+            final_ranking.append([self.dealer, self.dealer.name, self.dealer.hand])
+
+        #order the final ranking list by the hand
+        print(final_ranking)
+
+        sorted(final_ranking, key= lambda x:x[2], reverse=True)
+        print(final_ranking)
+
+
+        # if self.dealer.hand > 21:
+        #     if player.hand >21:
+        #         print("You are bust so is the dealer. Phew!")
+            
+        #     if player.hand < 21:
+        #         print("The dealer is bust and you're still in it. Nice one :) ")
+        #         player.points += 1
         
-        else:
-            if player.hand  > 21:
-                print("You are bust and the dealer is still in the game :( You lose a point for that")
-                player.points -= 1
+        # else:
+        #     if player.hand  > 21:
+        #         print("You are bust and the dealer is still in the game :( You lose a point for that")
+        #         player.points -= 1
             
-            elif player.hand > self.dealer.hand:
-                print("You beat the dealer! You get a point")
-                player.points += 1
+        #     elif player.hand > self.dealer.hand:
+        #         print("You beat the dealer by! You get a point".format(abs(player.hand - self.dealer.hand)))
+        #         player.points += 1
             
-            elif player.hand == self.dealer.hand:
-                print("No points for tying")
+        #     elif player.hand == self.dealer.hand:
+        #         print("No points for tying")
 
-            elif player.hand < self.dealer.hand:
-                print("The dealer has beat you by {}. That's -1 point".format(abs(self.dealer.hand - player.hand)))
-                player.points -= 1
+        #     elif player.hand < self.dealer.hand:
+        #         print("The dealer has beat you by {}. That's -1 point".format(abs(self.dealer.hand - player.hand)))
+        #         player.points -= 1
     
     def play(self):
         
@@ -424,9 +450,14 @@ class Game():
         sleep(2)
         self.set_players()
         sleep(2)
+
+        
             
 
         while True:
+            
+            for player in self.players:
+                player.hand = 0
 
             #dealing the first two cards to all players
             self.set_the_table()
@@ -435,26 +466,25 @@ class Game():
             #remember --> dealer is not in the list of players
             for player in self.players:
                 player.decide_play(self.deck)
-
-    
-
-            #dealer reveals his cards
-            print("Let's see, what did the dealer get?\n")
-            sleep(1)
-    
+          
+            #dealer always plays last
             self.dealer.decide_play(self.deck)
 
-            print("{}".format(self.human_player.name))
-            self.winning_rules(self.human_player)
-            sleep(2)
-
-            print("\n{}".format(self.computer_player.name))
-            self.winning_rules(self.computer_player)
+            #now let's tally up scores and decide winners
+            self.winning_rules()
+            # for player in self.players:
+        
+            #     print("{}".format(player.name))
+            #     self.winning_rules(player)
+            #     sleep(2)
 
             #our points are...
             print("\n\nHere's our points tally\n")
-            print("{}: {}".format(self.human_player.name, self.human_player.points))
-            print("{}: {}".format(self.computer_player.name, self.computer_player.points))
+            for player in self.players:
+
+                print("{}: {}".format(player.name, player.points))
+            
+            #print dealer points below
             print("Dealer: {}".format(self.dealer.points))
 
 
