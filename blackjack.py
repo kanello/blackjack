@@ -337,35 +337,74 @@ class HumanPlayer(Player):
         return "You currently have {} points in this game".format(self.score)
         
 class ComputerPlayer(Player):
-    """
-    Computer player plays exactly like the dealer currently
+    """A derived class from Player. Decision making can be modified via the decide play method
+
+    Atttributes
+    -----------
+    points: int
+        The points accumulated by a player over a number of rounds of blackjack
+    
+    name: str
+        The name of the player. So we can distinguish them and interact with the user. Gets assigned during contruction
+    
+    cards: list
+        Contains all the cards dealt to a single player
+
+    hand: int
+        Calculate the hand of a player. Sums the card.value for each card inside the 'cards' attribute 
     """
     
     
     def __init__(self) -> None:
         super().__init__()
+        
+        #give the computer player a name during construction
         self.set_name()
         
     def set_name(self):
+        """Give the computer player a name
+        
+        Returns
+        -------
+        name: str
+            Randomly selected from a list of uncommon baby names found here - https://hubbleconnected.com/blogs/news/50-least-and-most-common-baby-names-for-boys-and-girls
+        """
 
-        #inspired from the least popular baby names - https://hubbleconnected.com/blogs/news/50-least-and-most-common-baby-names-for-boys-and-girls
+        #uncommon baby names
         names = ["Jago", "Leroy", "Fabio", "Soren", "Brida", "Aubrie", "Mika", "Roxanne", "Ingrid", "Archie", "Benedict", "Margo", "Jad", "Harper", "Paola", "Ezra", "Idris"]
+        
+        #choose randomly
         self.name = random.choice(names)
         
     def decide_play(self, deck):
-        """
-        Control of dealer player decision
+        """Computer decisions on how to play
+        
+        Rules: draw until you reach 17, then stop drawing
 
-    
+        Parameters
+        ----------
+        deck: obj
+            The deck of cards we use for the game
+
+        Returns
+        -------
+        hand: int
+            The sum of values of all the cards inside the cards list
         """
 
         print("{}'s hand is {}".format(self.name, self.hand))
 
+        #set some delays to make the game play easier to follow
         while self.hand < 17:
             sleep(1)
+            
+            #inform the other players I'll be taking a card
             print("{}: Hit me!".format(self.name))
             sleep(1.5)
+            
             self.deal_card(deck)
+            
+            #tell users what my hand is worth
             print("{} has {}".format(self.name, self.hand))
             sleep(1.5)
 
@@ -375,6 +414,8 @@ class ComputerPlayer(Player):
         
         elif self.hand == 21:
             print("Yipee for me, I have 21!")
+            self.points =+ 1
+            
         
         elif self.hand >21:
             print("{} is bust".format(self.name))
@@ -383,6 +424,23 @@ class ComputerPlayer(Player):
         return self.hand
 
 class Dealer(Player):
+    """A derived class from Player. Decision making can be modified via the decide play method
+
+    Atttributes
+    -----------
+    points: int
+        The points accumulated by a player over a number of rounds of blackjack
+    
+    name: str
+        The name of the player. So we can distinguish them and interact with the user. Gets assigned during contruction
+    
+    cards: list
+        Contains all the cards dealt to a single player
+
+    hand: int
+        Calculate the hand of a player. Sums the card.value for each card inside the 'cards' attribute 
+    
+    """
     
     def __init__(self) -> None:
         super().__init__()
@@ -390,14 +448,31 @@ class Dealer(Player):
         self.score = 0
 
     def set_name(self):
+        """Standard name for dealer
+
+        Returns
+        -------
+        name: str
+            Dealer
+        """
         self.name = "Dealer"
         return super().set_name()
 
     def decide_play(self, deck):
-        """
-        Control of dealer player decision
+        """A dealer decides to stay or draw a card
 
-    
+
+        Rules: draw until you reach 17, then stop drawing
+
+        Paramters
+        ---------
+        deck: obj
+            The deck that we are playing the game with
+
+        Returns
+        -------
+        hand: int
+            The sum of values of all the cards inside the cards list
         """
 
         #dealer reveals their cards
