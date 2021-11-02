@@ -145,7 +145,7 @@ class HumanPlayer(Player):
         self.hand = self.card1 + self.card2
         
         
-        print("Your hand is {}".format(self.hand))
+        print("\nYour hand is {}".format(self.hand))
 
         while self.hand < 21:
 
@@ -171,6 +171,8 @@ class HumanPlayer(Player):
         
         elif self.hand > 21:
             print("sorry, you went bust!")
+
+        input("Press ENTER to move to next player")
 
         return self.hand
 
@@ -202,6 +204,7 @@ class ComputerPlayer(Player):
             new_card = deck.deal()
             self.hand += new_card.value
             print("computer has {}".format(self.hand))
+            sleep(1.5)
 
         
         if self.hand < 21:
@@ -212,6 +215,7 @@ class ComputerPlayer(Player):
         
         elif self.hand >21:
             print("computer is bust")
+        sleep (2)
 
         
 
@@ -272,12 +276,11 @@ class Game():
         sleep(1.5)
         print("\n\nThe aim of the game is simple...get as close to 21 as you can\n")
         sleep(2)
-        print("* Each player gets dealt two cards at the start of a round.\n* You can choose to draw a card or stay after that \n* Your goal is to get closer to 21 than the dealer does.\n* If you go over 21 you lose!\n")
+        print("* Each player gets dealt two cards at the start of a round\n* You can choose to draw a card or stay after that \n* Your goal is to get closer to 21 than the dealer does. You want to beat the dealer\n* If you go over 21 you lose a point!\n* If you beat the dealer you get a point \n* If you draw with the dealer you don't lose points\n")
         user_understands = input("Press ENTER to continue")
         separator = "_"*30
         print(separator)
-        
-    
+          
     def dealer_catchphrases(self):
 
         catch_phrases = ["Winner winner chicken dinner", "Feeling lucky?", "Jesus ... take the wheel!", "Are you fired up?" ]
@@ -288,36 +291,38 @@ class Game():
         print("\nDealer is dealing the first cards\n")
         sleep(2)
 
-        print("HUMAN")
+        print("\nYOU")
         self.human_player.card1 = self.deck.deal()
         
         sleep(3)
 
-        print("COMPUTER")
+        print("\nCOMPUTER")
         self.computer_player.card1 = self.deck.deal()
         sleep(3)
 
-        print("DEALER")
+        print("\nDEALER")
         self.dealer.card1 = self.deck.deal()
         sleep(2)
 
         print("First round of cards has been dealt. {}\n".format(self.dealer_catchphrases()))
         input("Press ENTER to continue to second round of cards\n")
+        separator = "_"*30
+        print(separator)
 
         #deal second card, facing up for all except for dealer
         print("Dealing the second card\n")
         sleep(1)
-        print("HUMAN")
+        print("\nYOU")
         print(self.human_player.card1)
         self.human_player.card2 = self.deck.deal()
         sleep(3)
 
-        print("COMPUTER")
+        print("\nCOMPUTER")
         print(self.computer_player.card1)
         self.computer_player.card2 = self.deck.deal()
         sleep(3)
 
-        print("DEALER")
+        print("\nDEALER")
         print(self.dealer.card1)
         self.dealer.card2 = self.deck.deal(hidden=True)
         sleep(3)
