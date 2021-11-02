@@ -635,7 +635,15 @@ class Game():
         return random.choice(catch_phrases)
 
     def set_the_table(self):
+        """Set the table by dealing the first two cards to each player
+
+        Loop through the players list and deal them a card. Do that twice. In the second card loop, dealers second card faces down
+        Calculate the value of the hand and show it to the users
         
+        Returns
+        -------
+        None
+        """
         #dealer is shuffling the deck; could also add a nice visual here and add a sleep too
         self.refresh_deck()
         self.deck.shuffle()
@@ -675,34 +683,50 @@ class Game():
             print(player.cards[0])
             sleep(2)
 
+        #show what the dealer had
         print("\nDEALER\n")
         print("Card 1")
         print(player.cards[0])
+
+        #dealers second card must always be hidden. Pass True to parameter
         self.dealer.deal_card(self.deck, True)        
     
     def winning_rules(self):
+        """Decide who wins the round
+        Add all the players into a list and sort by their score. Pick the top score
 
+        Returns
+        -------
+        None
+        """
 
+        #initialise list to be used later
         final_ranking = []
 
+        #add only the non-bust players into the list
         for player in self.players:
-            if player.hand <= 21:
+            if player.hand < 22:
                 each_player = []
                 each_player = [player, player.name, player.hand]
             
                 final_ranking.append(each_player)
 
+        #add the dealer to the list if they didn't go bust
         if self.dealer.hand <22:
             final_ranking.append([self.dealer, self.dealer.name, self.dealer.hand])
 
         #order the final ranking list by the hand
         final_ranking = sorted(final_ranking, key= lambda x:x[2], reverse=True)
+        
+        #select the winner and give them a point
         winner = final_ranking[0][0]
         winner.points +=1 
 
         print("{} wins!".format(winner.name))
     
     def clean_table(self):
+        """Reset the cards and hand values for the next round
+        """
         for player in self.players:
             player.hand = 0
         
@@ -710,14 +734,28 @@ class Game():
         self.dealer.cards = []
 
     def play(self):
+        """Main function running the blackjack game
+
+        Flow
+        ----
+        * introduce game
+        * spawn up the players
+        * deal them in
+        * they decide to stay or draw
+        * determine winner
+        * give winner a point
+        * ask to play again
+        """
         
-        #turn this off for now, to debug faster
-        # self.introduction_screen()
+        #Give the users instructions for how the game is to be played
+        self.introduction_screen()
         sleep(2)
+        
+        #get the user names and create them
         self.set_players()
         sleep(2)
 
-
+        #main playing loop. Breaks when the user exits after a round
         while True:
             
             #reset everyone's hand value and wipe their cards
@@ -736,7 +774,6 @@ class Game():
 
             #now let's tally up scores and decide winners
             self.winning_rules()
-           
 
             #our points are...
             print("\n\nHere's our points tally\n")
@@ -747,7 +784,7 @@ class Game():
             #print dealer points below
             print("Dealer: {}".format(self.dealer.points))
 
-
+            #does the human player want to play again? anyone can answer this
             x = input("Do you want to play again? Yes [y] or No [n]\n")
 
             if x == 'y':
@@ -763,7 +800,8 @@ class Game():
 
 
 def main():
-    game = Game(human_player=0, computer_player=2)
+
+    game = Game(human_player=1, computer_player=2)
     game.play()
     
 
