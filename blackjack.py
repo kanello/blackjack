@@ -8,35 +8,46 @@ from random import shuffle
 from abc import ABC, abstractmethod
 import random
 from time import sleep
-import os
+
 
 
 class Card:
-    def __init__(self, value, suit):
+    def __init__(self, face, suit):
 
-        self.value = value
+        self.face = face
         self.suit = suit
+        self.value = face
+
+        if face in ["J", "K", "Q"]:
+            self.value = 10
+        if face == 'A':
+            self.value = 11
+        elif face in range(1,10):
+            self.value = int(face)
+
 
 
     #we'll need to define how addition works so that we can calculate the value of a hand (made up of two cards) later on
     def __add__(self, other):
 
-        return self.value + other.value    
+        return int(self.value) + int(other.value)
 
-    def __str__(self) -> str:
+    def __str__(self):
         
         #would be nice to do some formatting here to make the cards look better to the user
-        return "\n|{}|\n------\n{}\n".format(self.suit, self.value)
+        return "\n{} | {}\n --> this is worth {}".format(self.face, self.suit, self.value)
     
 class Deck:
 
     def __init__(self):
 
         suits = ["hearts", "diamonds", "clubs", "spades"]
+        face = [n for n in range(2, 10)]
+        face += ["J", "Q", "K", "A"]
 
 
         #using list comprehension to keep compact #not using face values for ease
-        self._deck = [Card(value, suit) for suit in suits for value in range(1,14)]
+        self._deck = [Card(value, suit) for suit in suits for value in face]
 
 
     def deal(self, hidden = False):
@@ -64,13 +75,12 @@ class Deck:
         if hidden == False:
             print(dealt_card)
         else:
-            print("Card is facing downwards")
+            print("Card 2 is facing downwards")
 
         #debugger to show that the number of cards has been reduced by one
         # print("number of cards is {}".format(len(self._deck)))
 
         return dealt_card
-
         
     def shuffle(self):
         """
@@ -87,7 +97,6 @@ class Deck:
 
         shuffle(self._deck)
 
-
     def print_deck(self):
         for card in self._deck:
             print(card)
@@ -95,45 +104,6 @@ class Deck:
     def size(self):
         return len(self._deck)
 
-class Hand:
-    """
-    This class will deal with all operations relating to a dealt hand
-    - addition of cards
-    - comparing hands to each other
-    """
-
-    def __init__(self, card1, card2):
-        """
-        
-        """
-        
-        self.hand = card1.value + card2.value
-
-    def highest_hand (self, other):
-        """
-        take multiple hands as input here
-        try and get it to return the winning hand
-        """
-
-        if self.hand > other.hand:
-            
-            print("{} wins".format(self))
-
-            return self
-        
-        if self.hand < other.hand:
-            print("{} wins".format(other))
-            return other
-        
-        else:
-            print("it's a tie!")
-
-        
-
-
-
-    def __str__(self):
-        return "{}".format(self.hand)
 
 class Player(ABC):
     """
@@ -302,8 +272,11 @@ class Game():
         sleep(1.5)
         print("\n\nThe aim of the game is simple...get as close to 21 as you can\n")
         sleep(2)
-        print("* Each player gets dealt two cards at the start of a round. \n* Your goal is to get closer to 21 than the dealer does.\n* If you go over 21 you lose!\n")
-        user_understands = input("Press ENTER to continue\n")
+        print("* Each player gets dealt two cards at the start of a round.\n* You can choose to draw a card or stay after that \n* Your goal is to get closer to 21 than the dealer does.\n* If you go over 21 you lose!\n")
+        user_understands = input("Press ENTER to continue")
+        separator = "_"*30
+        print(separator)
+        
     
     def dealer_catchphrases(self):
 
@@ -381,8 +354,6 @@ class Game():
         self.introduction()
         sleep(2)
             
-        separator = "\n"+"_"*30
-        print(separator)
 
         while True:
 
@@ -422,25 +393,6 @@ class Game():
             if x == 'n':
                 exit
 
-
-        
-        
-
-
-        
-        
-        
-    
-                
-
-        
-
-        #compare cards with whoever is still in the game
-
-        #keep score of what happens
-
-        #ask if the player wants to play again
-        
 
     
 
