@@ -6,7 +6,9 @@ __author__ = "Anthony Kanellopoulos"
 
 from random import shuffle
 from abc import ABC, abstractmethod
+import random
 from time import sleep
+import os
 
 
 class Card:
@@ -141,66 +143,66 @@ class Player(ABC):
 
     def __init__(self) -> None:
         super().__init__()
-        card1 = None
-        card2 = None
+        card1 = 0
+        card2 = 0
+        self.hand = card1 + card2
+        self.points = 0
 
 
     
     @abstractmethod
-    def decide_play(card1, card2):
+    def decide_play(self, deck):
         """
         Documentation
         - decide whether to stay or whether to draw
         """
+
+        
         pass
 
 class HumanPlayer(Player):
     
     def __init__(self) -> None:
         super().__init__()
-        self.score = 0
-
-
-          
-        
-    def decide_play(self, deck, card1, card2):
+              
+    def decide_play(self, deck):
         """"
         Give the player an option to draw a card or stay
         """
+       
+        
+        #ensure that the player is in the game
+        self.hand = self.card1 + self.card2
+        
+        
+        print("Your hand is {}".format(self.hand))
 
-        hand = card1 + card2
+        while self.hand < 21:
 
-        print("Your hand is {}".format(hand))
-
-        while hand < 21:
-
-            decision = input("\nWhat would you like to do?\nDRAW [d]\nSTAY [s]\n".format(hand))
+            decision = input("\nWhat would you like to do?\nDRAW [d]\nSTAY [s]\n\n".format(self.hand))
             
             #obviously you must do some input validation here
             if decision == 'd':
                 
                 card = deck.deal()
-                hand += card.value
+                self.hand += card.value
 
-                print("Your hand value is {}".format(hand))
+                print("\nYour hand value is {}\n".format(self.hand))
             
             elif decision == 's':
 
-                print("That may (or may not) have been a wise decision. Only time will tell")
+                print("\nThat may (or may not) have been a wise decision. Only time will tell\n")
                 break
                 
 
-        if hand == 21:
+        if self.hand == 21:
             print("You get a point!")
-            self.score += 1
+            self.points += 1
         
-        elif hand > 21:
+        elif self.hand > 21:
             print("sorry, you went bust!")
-            #kick the player out of the game
 
-        return hand
-        
-
+        return self.hand
 
     def __str__(self):
         
@@ -215,36 +217,35 @@ class ComputerPlayer(Player):
     def __init__(self) -> None:
         super().__init__()
         
-        self.score = 0
 
-    def decide_play(self, deck, card1, card2):
+    def decide_play(self, deck):
         """
         Control of dealer player decision
 
     
         """
 
-        hand = card1 + card2
-        print("computer's hand is {}".format(hand))
+        self.hand = self.card1 + self.card2
+        print("computer's hand is {}".format(self.hand))
 
-        while hand < 17:
+        while self.hand < 17:
             new_card = deck.deal()
-            hand += new_card.value
-            print("computer has {}".format(hand))
+            self.hand += new_card.value
+            print("computer has {}".format(self.hand))
 
         
-        if hand < 21:
+        if self.hand < 21:
             print("I stay")
         
-        elif hand == 21:
+        elif self.hand == 21:
             print("Yipee for me, I have 21!")
         
-        elif hand >21:
+        elif self.hand >21:
             print("computer is bust")
 
         
 
-        return hand
+        return self.hand
 
 class Dealer(Player):
     
@@ -253,35 +254,31 @@ class Dealer(Player):
         
         self.score = 0
 
-    def decide_play(self, deck, card1, card2):
+    def decide_play(self, deck):
         """
         Control of dealer player decision
 
     
         """
 
-        hand = card1 + card2
-        print("Dealer's hand is {}".format(hand))
+        self.hand = self.card1 + self.card2
+        print("Dealer's hand is {}\n".format(self.hand))
 
-        while hand < 17:
+        while self.hand < 17:
             new_card = deck.deal()
-            hand += new_card.value
-            print("Dealer has {}".format(hand))
+            self.hand += new_card.value
+            print("Dealer has {}".format(self.hand))
 
         
-        if hand < 21:
-            print("I stay")
+        if self.hand < 21:
+            print("I stay\n")
         
-        elif hand == 21:
-            print("Yipee for me, I have 21!")
+        elif self.hand == 21:
+            print("Yipee for me, I have 21!\n")
         
-        elif hand >21:
-            print("dealer is bust")
-
+        elif self.hand >21:
+            print("dealer is bust\n")
         
-
-        return hand
-
 class Game():
     """"
     Initialise a game of blackjack
@@ -295,19 +292,25 @@ class Game():
         self.dealer = Dealer()
         self.deck = Deck()
 
-
     def introduction(self):
         #initialise our playing deck
         self.deck.shuffle()
 
         #give some nice UI instructions for what's going to happen
         separator = "\n"+"_"*30
-        print("\n\nWelcome to my home-made blackjack game!{}".format(separator))
-        sleep(1)
-        print("""\n\nThe aim of the game is simple...get as close to 21 as you can!\n
-        Each player gets dealt two cards at the start of a round. Your goal is to get closer to 21 than the dealer does. If you go over 21 you lose!\n""")
-        user_understands = input("Press ENTER to continure\n")
+        print("\n\nLET'S PLAY BLACKJACK!{}".format(separator))
+        sleep(1.5)
+        print("\n\nThe aim of the game is simple...get as close to 21 as you can\n")
+        sleep(2)
+        print("* Each player gets dealt two cards at the start of a round. \n* Your goal is to get closer to 21 than the dealer does.\n* If you go over 21 you lose!\n")
+        user_understands = input("Press ENTER to continue\n")
     
+    def dealer_catchphrases(self):
+
+        catch_phrases = ["Winner winner chicken dinner", "Feeling lucky?", "Jesus ... take the wheel!", "Are you fired up?" ]
+
+        return random.choice(catch_phrases)
+
     def set_the_table(self):
         print("\nDealer is dealing the first cards\n")
         sleep(2)
@@ -325,7 +328,7 @@ class Game():
         self.dealer.card1 = self.deck.deal()
         sleep(2)
 
-        print("First round of cards has been dealt. Feeling lucky?\n")
+        print("First round of cards has been dealt. {}\n".format(self.dealer_catchphrases()))
         input("Press ENTER to continue to second round of cards\n")
 
         #deal second card, facing up for all except for dealer
@@ -346,58 +349,110 @@ class Game():
         self.dealer.card2 = self.deck.deal(hidden=True)
         sleep(3)
 
+    def winning_rules(self, player):
 
+        if self.dealer.hand > 21:
+            if player.hand >21:
+                print("You are bust so is the dealer. Phew!")
+            
+            if player.hand < 21:
+                print("The dealer is bust and you're still in it. Nice one :) ")
+                player.points += 1
+        
+        else:
+            if player.hand  > 21:
+                print("You are bust and the dealer is still in the game :( You lose a point for that")
+                player.points -= 1
+            
+            elif player.hand > self.dealer.hand:
+                print("You beat the dealer! You get a point")
+                player.points += 1
+            
+            elif player.hand == self.dealer.hand:
+                print("No points for tying")
 
+            elif player.hand < self.dealer.hand:
+                print("The dealer has beat you by {}. That's -1 point".format(abs(self.dealer.hand - player.hand)))
+                player.points -= 1
+    
     def play(self):
         
+
         self.introduction()
         sleep(2)
-        
+            
         separator = "\n"+"_"*30
         print(separator)
 
-        self.set_the_table()
+        while True:
 
-        # self.human_player.decide_play(card1, )
+            #dealing the first two cards to all players
+            self.set_the_table()
 
-        #human player plays
+            #now players decide if they want to hit or stay
+            self.human_player.decide_play(self.deck)
+            self.computer_player.decide_play(self.deck)
 
-        #computer player plays
+            #dealer reveals his cards
+            print("Let's see, what did the dealer get?\n")
+            sleep(1)
+            print(self.dealer.card1)
+            print(self.dealer.card2)
+            self.dealer.decide_play(self.deck)
 
-        #dealer reveals his cards
-        #dealer plays
+            print("HUMAN")
+            self.winning_rules(self.human_player)
+            sleep(2)
+
+            print("\nCOMPUTER")
+            self.winning_rules(self.computer_player)
+
+            #our points are...
+            print("\n\nHere's our points tally\n")
+            print("Human: {}".format(self.human_player.points))
+            print("Computer: {}".format(self.computer_player.points))
+            print("Dealer: {}".format(self.dealer.points))
+
+
+            x = input("Do you want to play again? Yes [y] or No [n]\n")
+
+            if x == 'y':
+                pass
+                print("Ok, there are {} cards remaining in the deck".format(self.deck.size()))
+            if x == 'n':
+                exit
+
+
+        
+        
+
+
+        
+        
+        
+    
+                
+
+        
+
+        #compare cards with whoever is still in the game
 
         #keep score of what happens
 
         #ask if the player wants to play again
         
 
-        
-
-    # def
+    
 
 
 def main():
-
-    deck = Deck()
-    # deck.print_deck()
-    deck.shuffle()
-    # deck.print_deck()
-
-
-    player_1 = HumanPlayer()
-    dealer = Dealer()
-    com = ComputerPlayer()
-    player_1.decide_play(deck, deck.deal(), deck.deal())
-    com.decide_play(deck, deck.deal(), deck.deal())
-    dealer.decide_play(deck, deck.deal(), deck.deal())
-
-    print(deck.size())
+    game = Game()
+    game.play()
+    
 
 
 
 if __name__ == "__main__":
 
-    # main()
-    game = Game()
-    game.play()
+    main()
+    
