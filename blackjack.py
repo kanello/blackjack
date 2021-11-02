@@ -178,7 +178,6 @@ class Player(ABC):
 
     hand: int
         Calculate the hand of a player. Sums the card.value for each card inside the 'cards' attribute 
-
     """
 
     def __init__(self) -> None:
@@ -219,9 +218,10 @@ class Player(ABC):
     
     @abstractmethod
     def decide_play(self, deck):
-        """
-        Documentation
-        - decide whether to stay or whether to draw
+        """Player decision on what to do
+
+        The options are that either the player will draw a card or they will stay
+        It should result in either the player staying on a card going bust
         """
 
         
@@ -229,10 +229,19 @@ class Player(ABC):
 
     @abstractmethod
     def set_name(self):
+        """Set the name of the players
+        """
         
         pass
 
     def show_name(self):
+        """Prints the name of a player
+        
+        Returns
+        -------
+        name: str
+            The name of each player
+        """
         print(self.name)
 
 class HumanPlayer(Player):
