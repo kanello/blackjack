@@ -27,17 +27,7 @@ class Card:
     """
 
     def __init__(self, face, suit):
-        """
-        This is our card class constructor.
-        Gives a Card a face (for printing to the console), a suit and a value (to compare against other cards)
-
-        Parameters
-        ----------
-        face: str
-            This is the face of a card, ranging from 2 to A. Not to be confused with the value of the card. This is used for display purposes
-        suit: str
-            One of 4 available suits in a deck of cards 
-        
+        """Construct a card
         """
 
         self.face = face
@@ -105,15 +95,6 @@ class Deck:
     """
     def __init__(self):
         """Constructs a deck of cards
-
-        Parameters
-        ----------
-
-        Returns
-        -------
-        _deck: list
-            As above
-        
         """
 
         suits = ["HEARTS", "DIAMONDS", "CLUBS", "SPADES"]
@@ -182,22 +163,55 @@ class Deck:
         return len(self._deck)
 
 class Player(ABC):
-    """
-    Documentation
-    - I want the player to have an attribute which is their hand
+    """Abstract base class representing a player of blackjack
+
+    Atttributes
+    -----------
+    points: int
+        The points accumulated by a player over a number of rounds of blackjack
+    
+    name: str
+        The name of the player. So we can distinguish them and interact with the user
+    
+    cards: list
+        Contains all the cards dealt to a single player
+
+    hand: int
+        Calculate the hand of a player. Sums the card.value for each card inside the 'cards' attribute 
+
     """
 
     def __init__(self) -> None:
+        """Construct the Player
+        """
         super().__init__()
-        self.card1 = None
-        self.card2 = None
         self.points = 0
         self.name = None
         self.cards = []
         self.hand = 0
   
-    def deal_card(self, deck, Hidden= False):
-        new_card = deck.deal(Hidden)
+    def deal_card(self, deck, hidden= False):
+        """Deals a card to a player
+
+
+        Parameters
+        ----------
+        deck: obj
+            A deck of cards
+        
+        hidden: bool
+            To hide a dealt card from the users
+
+        Returns
+        -------
+        cards: list
+            list of card objects
+        hand: int
+            the sum of card values for each card in the list of cards
+        """
+        
+        #pass the hidden through so we can toggle it down the line
+        new_card = deck.deal(hidden)
         self.cards.append(new_card)
         
         #calculate the hand
