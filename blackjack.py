@@ -13,7 +13,32 @@ import os
 
 
 class Card:
+    """A card from a standard deck of cards. Ranging from 2-10, incl. A,K,Q,J. 
+
+    Attributes
+    ----------
+    face: str
+        The number or face rank of the card. e.g. K or 4
+    value: int
+        The number value of a card. From 2-10, the face value is used. K,Q,J are worth 10. A is worth 11
+    suit: str
+        The suit of a card. Options are [hearts, diamonds, clubs, spades]
+    
+    """
+
     def __init__(self, face, suit):
+        """
+        This is our card class constructor.
+        Gives a Card a face (for printing to the console), a suit and a value (to compare against other cards)
+
+        Parameters
+        ----------
+        face: str
+            This is the face of a card, ranging from 2 to A. Not to be confused with the value of the card. This is used for display purposes
+        suit: str
+            One of 4 available suits in a deck of cards 
+        
+        """
 
         self.face = face
         self.suit = suit
@@ -26,7 +51,16 @@ class Card:
         elif face in range(1,10):
             self.value = int(face)
 
+    #we might need to access the ace as either a 1 or an 11
     def flip_ace(self, direction):
+        """Allow the game to use the Ace as 1 or 11
+        
+        Paremeters
+        ----------
+        direction: str
+            Accepts up/down and accordingly sets the Ace card as 1 or 11
+        
+        """
         if direction == 'up':
             self.value = 11
         elif direction == 'down':
@@ -34,7 +68,18 @@ class Card:
 
     #we'll need to define how addition works so that we can calculate the value of a hand (made up of two cards) later on
     def __add__(self, other):
+        """Addition of the values of cards
 
+        Parameters
+        ----------
+        other: obj
+            Another card object, identical object type to the card object in 'self'
+
+        Returns
+        -------
+        self.value + other.value: int
+            Add the value attributes of the current object and another card object. Return the sum
+        """
         return int(self.value) + int(other.value)
 
     def __str__(self):
