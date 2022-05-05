@@ -1,4 +1,4 @@
-* The blackjack project was created for the class MPCS 51042
+# The blackjack project was created for the class MPCS 51042
 ---
 
 General blackjack rules:
