@@ -1,4 +1,5 @@
-_The blackjack project was created for the class MPCS 51042
+* The blackjack project was created for the class MPCS 51042
+---
 
 General blackjack rules:
 * each player dealt into the game wants to get as close to 21 as possible
